@@ -2,10 +2,91 @@
 @tailwind components;
 @tailwind utilities;
 
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+html {
+  box-sizing: border-box;
+}
 body {
   font-family: Arial, Helvetica, sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  width: 100%;
+  max-height: 100vh;
 }
 
+:root{
+  --primary1:#30AACF;
+  --primary2:#305ACF;
+  --primary3:#30CFA5
+}
+
+.input-box{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 5px;
+  color: #305ACF;
+  margin-bottom: 10px;
+}
+
+.input{
+  width: 100%;
+  padding: 8px;
+  border: 2px #305ACF solid;
+  border-radius: 10px;
+  color: black;
+}
+
+.input-error{
+  color: red;
+  font-size: medium;
+}
+
+/* Custom transitions for form and image */
+.form-container {
+  display: flex;
+  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+.form-container-enter {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.form-container-exit {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.image-container {
+  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+.image-container-enter {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.image-container-exit {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  
+  background-color: white; /* Ensure it's visible */
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional for a shadow effect */
+}
