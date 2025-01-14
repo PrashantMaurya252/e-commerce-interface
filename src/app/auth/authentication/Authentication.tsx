@@ -2,15 +2,20 @@
 import {zodResolver} from '@hookform/resolvers/zod'
 import {z} from 'zod'
 import { useForm } from 'react-hook-form'
+import axios from 'axios'
 
 
 import React, { useState } from 'react'
+import { backendURL } from '@/constants'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 const Authentication = () => {
   
-    const [formType,setFormType] = useState("Signup")
+    const [formType,setFormType] = useState("Login")
     const [loading,setLoading] = useState(false)
     const [showPassword,setShowPassword] = useState(true)
+    const router = useRouter()
 
     const LoginFormSchema = z.object({
       loginEmail : z.string(),
@@ -21,26 +26,100 @@ const Authentication = () => {
       signupFullName:z.string().nonempty("Full Name is required"),
       signupEmail : z.string().nonempty("Email is required"),
       signupPassword:z.string().nonempty("Password is required"),
-      signupConfirmPassword:z.string().nonempty("Confirm Password is required").refine((val)=> val === SignupFormSchema.signupPassword,{message:"Password Don't match "})
+      signupConfirmPassword:z.string().nonempty("Confirm Password is required")
     })
 
     const schema = formType === "Login"? LoginFormSchema : SignupFormSchema
     type LoginFormValues = z.infer<typeof LoginFormSchema>;
     type SignupFormValues = z.infer<typeof SignupFormSchema>;
     type FormValues = typeof schema extends z.ZodObject<infer U> ? U : never;
-    const {register,handleSubmit,formState:{errors}} = useForm<FormValues>({
+    const {register,handleSubmit,formState:{errors},reset} = useForm<FormValues>({
       resolver:zodResolver(schema)
     })
+
+    const handleSignup =async(data:FormValues)=>{
+      const submissioData = {
+        fullname:data.signupFullName,
+        email:data.signupEmail,
+        password:data.signupPassword
+      }
+      setLoading(true)
+      try {
+
+        const res =await axios.post(`${backendURL}/users/register`,submissioData,
+          {
+            headers:{
+              "Content-Type":'application/json'
+            },withCredentials:true
+          }
+        )
+        if(res.data.status){
+          setFormType("Login")
+          reset()
+          toast.success('User Created Successfully')
+        }
+      } catch (error) {
+        
+        if (axios.isAxiosError(error)) {
+          // Handle Axios-specific error
+          toast.error(error.response?.data?.message || 'An unknown error occurred');
+        } else {
+          // Handle generic errors
+          toast.error('An unexpected error occurred');
+        }
+      }
+      finally{
+        setLoading(false)
+      }
+    }
+
+    const handleLogin =async(data:FormValues)=>{
+      const submissioData = {
+       
+        email:data.loginEmail,
+        password:data.loginPassword
+      }
+      setLoading(true)
+      try {
+
+        const res =await axios.post(`${backendURL}/users/login`,submissioData,
+          {
+            headers:{
+              "Content-Type":'application/json'
+            },withCredentials:true
+          }
+        )
+        if(res.data.status){
+          
+          reset()
+          toast.success('User Created Successfully')
+        }
+      } catch (error) {
+        
+        if (axios.isAxiosError(error)) {
+          // Handle Axios-specific error
+          toast.error(error.response?.data?.message || 'An unknown error occurred');
+        } else {
+          // Handle generic errors
+          toast.error('An unexpected error occurred');
+        }
+      }
+      finally{
+        setLoading(false)
+      }
+    }
+
+    
     
     const onSubmit = (data:FormValues) => {
       console.log("Form Submitted: ", data);
     };
   return (
     <div className='w-full h-full flex overflow-hidden'>
-      <div className='w-[50%] h-full flex justify-center items-center'>
+      <div className={`w-[50%] h-full flex justify-center items-center screen-900:w-full`}>
         <div className='w-full flex justify-center items-center h-full'>
          {formType === "Login" ?(
-           <form onSubmit={handleSubmit(onSubmit)} className="w-[70%] border-[2px] border-black rounded-xl p-4">
+           <form onSubmit={handleSubmit(formType === "Login" ? handleLogin : handleSignup)} className="w-[70%] border-[2px] border-black rounded-xl p-4 screen-480:w-[95%]">
            <h1 className='text-center font-bold text-2xl my-4'>Login </h1>
           
     
@@ -79,7 +158,7 @@ const Authentication = () => {
          
         </form>
          ):(
-           <form onSubmit={handleSubmit(onSubmit)} className="w-[70%] border-[2px] border-black rounded-xl p-4">
+           <form onSubmit={handleSubmit(formType === "Login" ? onSubmit : handleSignup)} className="w-[70%] border-[2px] border-black rounded-xl p-4 screen-480:w-[95%]">
             <h1 className='text-center font-bold text-2xl my-4'>Sign Up </h1>
            <div className='input-box'>
              <label htmlFor="signupFullName" className=''>Full Name</label>
@@ -136,15 +215,15 @@ const Authentication = () => {
              {errors.signupConfirmPassword && <p className='input-error'>{errors.signupConfirmPassword.message}</p>}
            </div>
             <div className='flex flex-col justify-center items-end mt-3'>
-            <button type="submit" className='bg-[var(--primary2)]  py-2 rounded-[5px] text-white w-[40%] font-semibold text-lg'>Sign Up</button>
-            <p className='text-center mt-3 text-[var(--primary1)] cursor-pointer' onClick={()=>setFormType("Login")}>Already Have An Account ?</p>
+            <button disabled={loading} type="submit" className='bg-[var(--primary2)]  py-2 rounded-[5px] text-white w-[40%] font-semibold text-lg'>{loading ? "Loading":"Sign Up"}</button>
+            <p className='text-center mt-3 text-[var(--primary1)] cursor-pointer text-sm' onClick={()=>setFormType("Login")}>Already Have An Account ?</p>
             </div>
           
          </form>
          )}
         </div>
       </div>
-      <div className='w-[50%] h-full'>
+      <div className={`w-[50%] h-full image-container screen-900:hidden`}>
         <img src='/images/signup-banner.jpeg' alt='banner' className='w-full h-full object-cover object-center'/>
       </div>
     </div>

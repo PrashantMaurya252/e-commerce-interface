@@ -51,8 +51,8 @@ body {
 }
 
 /* Custom transitions for form and image */
-.form-container {
-  display: flex;
+.form-container,
+.image-container {
   transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
 }
 
@@ -64,10 +64,6 @@ body {
 .form-container-exit {
   transform: translateX(-100%);
   opacity: 0;
-}
-
-.image-container {
-  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
 }
 
 .image-container-enter {

@@ -26,8 +26,8 @@ const Header = () => {
     }
   };
   return (
-    <div className="w-full h-[100px]  px-3 border-b-[2px]">
-      <div className="w-full h-full flex justify-end items-center gap-5">
+    <div className="w-full h-[100px] screen-480:h-[70px] px-3 border-b-[2px]">
+      <div className="w-full h-full flex justify-end screen-480:justify-center items-center gap-5">
         <div className="flex justify-center items-center gap-5">
           {navItems?.map((item, index) => (
             <div
@@ -35,8 +35,8 @@ const Header = () => {
               onClick={() => handleItemClick("navItems", item)}
               key={index}
             >
-              <span>{item.icon}</span>
-              <span key={index} className=" font-semibold text-lg">
+              <span >{item.icon}</span>
+              <span key={index} className=" font-semibold text-lg screen-480:text-sm">
                 {item?.label}
               </span>
             </div>
@@ -50,8 +50,8 @@ const Header = () => {
               onClick={() => handleItemClick("usernavItems", item)}
               key={index}
             >
-              <span>{item.icon}</span>
-              <span key={index} className=" font-semibold text-lg">
+              <span  >{item.icon}</span>
+              <span key={index} className=" font-semibold text-lg screen-480:text-sm">
                 {item?.label}
               </span>
             </div>

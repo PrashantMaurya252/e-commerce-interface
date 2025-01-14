@@ -79,7 +79,13 @@ export default {
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
-  		}
+  		},
+		screens:{
+			"screen-1100":{min:'0px',max:'1100px'},
+			"screen-900":{min:'0px',max:'900px'},
+			"screen-680":{min:'0px',max:'680px'},
+			"screen-480":{min:'0px',max:'480px'},
+		}
   	}
   },
   plugins: [require("tailwindcss-animate"),addDynamicIconSelectors()],
