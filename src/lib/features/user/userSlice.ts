@@ -14,6 +14,16 @@ interface User{
     
 }
 
+interface AuthUser{
+    _id:String,
+    email:String,
+    username:String,
+    fullname:String,
+    token:String,
+    isVerified:Boolean,
+    avatar:String
+}
+
 interface CartItem{
     _id:string,
     quantity:number
@@ -25,18 +35,20 @@ interface Favourites{
 }
 
 interface UserState{
-    user:User | null
+    user:User | null,
+    authUser:AuthUser | null
 }
 const initialState:UserState={
-    user: null
+    user: null,
+    authUser:null
 }
 
 const userSlice = createSlice({
     name:"user",
     initialState,
     reducers:{
-        setAuthUser : (state,action:PayloadAction<User>)=>{
-            state.user = action.payload
+        setAuthUser : (state,action:PayloadAction<AuthUser>)=>{
+            state.authUser = action.payload
         },
         updateUserFavourites:(state,action:PayloadAction<Favourites>)=>{
             if(state.user){

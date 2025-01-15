@@ -5,17 +5,18 @@ import { useForm } from 'react-hook-form'
 import axios from 'axios'
 
 
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { backendURL } from '@/constants'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 
 const Authentication = () => {
   
-    const [formType,setFormType] = useState("Login")
+    const [formType,setFormType] = useState<"Login"|"Sign Up">("Login")
     const [loading,setLoading] = useState(false)
     const [showPassword,setShowPassword] = useState(true)
     const router = useRouter()
+    
 
     const LoginFormSchema = z.object({
       loginEmail : z.string(),
@@ -27,21 +28,22 @@ const Authentication = () => {
       signupEmail : z.string().nonempty("Email is required"),
       signupPassword:z.string().nonempty("Password is required"),
       signupConfirmPassword:z.string().nonempty("Confirm Password is required")
-    })
+    }).refine((data)=>data.signupPassword === data.signupConfirmPassword,{message:"Password Don't Match",path:["signupConfirmPassword"]})
 
-    const schema = formType === "Login"? LoginFormSchema : SignupFormSchema
+    const schema = useMemo(()=>(formType === "Login"? LoginFormSchema : SignupFormSchema),[formType])
     type LoginFormValues = z.infer<typeof LoginFormSchema>;
     type SignupFormValues = z.infer<typeof SignupFormSchema>;
-    type FormValues = typeof schema extends z.ZodObject<infer U> ? U : never;
+    type FormValues = LoginFormValues | SignupFormValues
     const {register,handleSubmit,formState:{errors},reset} = useForm<FormValues>({
       resolver:zodResolver(schema)
     })
 
     const handleSignup =async(data:FormValues)=>{
+      const signupData = data as SignupFormValues
       const submissioData = {
-        fullname:data.signupFullName,
-        email:data.signupEmail,
-        password:data.signupPassword
+        fullname:signupData.signupFullName,
+        email:signupData.signupEmail,
+        password:signupData.signupPassword
       }
       setLoading(true)
       try {
@@ -74,10 +76,10 @@ const Authentication = () => {
     }
 
     const handleLogin =async(data:FormValues)=>{
+      const loginData = data as LoginFormValues
       const submissioData = {
-       
-        email:data.loginEmail,
-        password:data.loginPassword
+        email:loginData.loginEmail,
+        password:loginData.loginPassword
       }
       setLoading(true)
       try {
