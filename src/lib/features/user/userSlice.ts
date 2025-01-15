@@ -21,7 +21,8 @@ interface AuthUser{
     fullname:String,
     token:String,
     isVerified:Boolean,
-    avatar:String
+    avatar:String,
+    cartItems:Number
 }
 
 interface CartItem{

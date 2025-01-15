@@ -1,7 +1,7 @@
 "use client"
 import {zodResolver} from '@hookform/resolvers/zod'
 import {z} from 'zod'
-import { useForm } from 'react-hook-form'
+import { FieldErrors, useForm } from 'react-hook-form'
 import axios from 'axios'
 
 
@@ -16,6 +16,7 @@ const Authentication = () => {
     const [loading,setLoading] = useState(false)
     const [showPassword,setShowPassword] = useState(true)
     const router = useRouter()
+    
     
 
     const LoginFormSchema = z.object({
@@ -111,11 +112,6 @@ const Authentication = () => {
       }
     }
 
-    
-    
-    const onSubmit = (data:FormValues) => {
-      console.log("Form Submitted: ", data);
-    };
   return (
     <div className='w-full h-full flex overflow-hidden'>
       <div className={`w-[50%] h-full flex justify-center items-center screen-900:w-full`}>
@@ -134,7 +130,7 @@ const Authentication = () => {
               className='input'
               placeholder='Email'
             />
-            {errors.loginEmail && <p className='input-error'>{errors.loginEmail.message}</p>}
+            {formType === "Login" && "loginEmail" in errors && errors.loginEmail && (<p className='input-error'>{errors.loginEmail.message}</p>)}
           </div>
     
           <div className='input-box'>
@@ -146,7 +142,7 @@ const Authentication = () => {
               className='input'
               placeholder='Password'
             />
-            {errors.loginPassword && <p className='input-error'>{errors.loginPassword.message}</p>}
+            {formType === "Login" && "loginPassword" in errors && errors.loginPassword && <p className='input-error'>{errors.loginPassword.message}</p>}
           </div>
 
          
@@ -160,7 +156,7 @@ const Authentication = () => {
          
         </form>
          ):(
-           <form onSubmit={handleSubmit(formType === "Login" ? onSubmit : handleSignup)} className="w-[70%] border-[2px] border-black rounded-xl p-4 screen-480:w-[95%]">
+           <form onSubmit={handleSubmit(handleSignup)} className="w-[70%] border-[2px] border-black rounded-xl p-4 screen-480:w-[95%]">
             <h1 className='text-center font-bold text-2xl my-4'>Sign Up </h1>
            <div className='input-box'>
              <label htmlFor="signupFullName" className=''>Full Name</label>
@@ -171,7 +167,7 @@ const Authentication = () => {
                className='input'
                placeholder='Full Name'
              />
-             {errors.signupFullName && <p className='input-error'>{errors.signupFullName.message}</p>}
+             {formType === "Sign Up" && "signupFullName" in errors && errors.signupFullName  && <p className='input-error'>{errors.signupFullName.message}</p>}
            </div>
      
            <div className='input-box'>
@@ -183,7 +179,7 @@ const Authentication = () => {
                className='input'
                placeholder='Email'
              />
-             {errors.signupEmail && <p className='input-error'>{errors.signupEmail.message}</p>}
+             {formType === "Sign Up" && "signupEmail" in errors && errors.signupEmail &&  <p className='input-error'>{errors.signupEmail.message}</p>}
            </div>
      
            <div className='input-box'>
@@ -195,7 +191,7 @@ const Authentication = () => {
                className='input'
                placeholder='Password'
              />
-             {errors.signupPassword && <p className='input-error'>{errors.signupPassword.message}</p>}
+             {formType === "Sign Up" && "signupPassword" in errors && errors.signupPassword &&  <p className='input-error'>{errors.signupPassword.message}</p>}
            </div>
 
            <div className='input-box '>
@@ -214,7 +210,7 @@ const Authentication = () => {
               ):(<button className='absolute right-0 top-0'>{<span className="icon-[fluent--eye-48-regular] w-[24px] h-[24px]"></span>}</button>)}
              </div>
              
-             {errors.signupConfirmPassword && <p className='input-error'>{errors.signupConfirmPassword.message}</p>}
+             {formType === "Sign Up" && "signupConfirmPassword" in errors && errors.signupConfirmPassword  && <p className='input-error'>{errors.signupConfirmPassword.message}</p>}
            </div>
             <div className='flex flex-col justify-center items-end mt-3'>
             <button disabled={loading} type="submit" className='bg-[var(--primary2)]  py-2 rounded-[5px] text-white w-[40%] font-semibold text-lg'>{loading ? "Loading":"Sign Up"}</button>
